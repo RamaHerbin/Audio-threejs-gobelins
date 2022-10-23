@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 
 export default class Renderer {
-  constructor(_viewport) {
+  constructor(_$canvas, _viewport) {
     this.renderer = new THREE.WebGLRenderer({
-      canvas: this.$canvas,
+      canvas: _$canvas,
     });
 
     const { width, height } = _viewport;
