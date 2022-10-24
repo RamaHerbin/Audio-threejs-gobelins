@@ -18,7 +18,6 @@ export default class Sizes extends EventEmitter {
         this.height = window.innerHeight;
         this.viewport.width = this.width
         this.viewport.height = this.height
-        console.log('this.viewport :>> ', this.viewport);
 
         this.trigger('resize');
     }

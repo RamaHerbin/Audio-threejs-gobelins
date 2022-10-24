@@ -13,8 +13,12 @@ export default class Camera {
         this.container.matrixAutoUpdate = false;
 
         this.setInstance();
-        // this.setOrbitControls();
+        this.setOrbitControls();
     }
+
+    static get instance() {
+		return this.instance;
+	}
 
     setInstance() {
         const { width, height } = this.sizes.viewport;
@@ -31,8 +35,8 @@ export default class Camera {
     }
 
     setOrbitControls() {
-        this.orbitControls = new OrbitControls(this.instance, this.renderer.domElement);
-        this.orbitControls.enableDamping = true;
+        this.orbitControls = new OrbitControls(this.instance, this.renderer.instance.domElement);
+        // this.orbitControls.enableDamping = true;
 
         // this.time.on('tick', () => this.orbitControls.update());
     }
