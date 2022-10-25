@@ -55,11 +55,11 @@ class Audio {
 		this.levelsCount = 16
 		this.beatCutOff = 0
 		this.beatTime = 0
-
+		this.isPlaying = false;
 	}
 
 	start({ onLoad = null, onBeat = null, live = true, analyze = true, debug = false, playlist = ["audio/galvanize.mp3"], shutup = false, src = null } = {}) {
-
+		this.isPlaying = true;
 		this.debug = debug
 		this.playlist = playlist
 		this.live = live

@@ -15,6 +15,7 @@ import Camera from "./Camera";
 import Scene from "./Scene";
 import audio from "./utils/audio";
 import { Data3DTexture, WireframeGeometry } from "three";
+import String from "./String";
 
 export default class Application {
   constructor(_params) {
@@ -36,6 +37,9 @@ export default class Application {
     this.lineMesh = null; //Access lineMesh globally
     this.composer = null;
     this.gui = null;
+    this.audio = audio;
+
+
     this.setupGUI();
 
     this.setupCamera();
@@ -100,43 +104,74 @@ export default class Application {
   setupMesh() {
 
 // Cube
-    const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
-    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-    const cube = new THREE.Mesh(cubeGeometry, material);
-    this.scene.instance.add(cube);
+    // const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
+    // const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    // const cube = new THREE.Mesh(cubeGeometry, material);
+    // this.scene.instance.add(cube);
 
 // Line
-    const positions = [];
-    const colors = [];
 
+
+    const stringPositions = [];
+    const stringColors = [];
     const divisions = 100;
 
-    const LINE_NB = 6;
-
     for (let i = 0; i < divisions; i++) {
-      positions.push((i / divisions) * 100, 0, 0);
-      colors.push(1, 1, 1);
+      stringPositions.push((i / divisions) * 100, 0, 0);
+      stringColors.push(1, 1, 1);
     }
 
-    const geometry = new LineGeometry();
-    geometry.setPositions(positions);
-    geometry.setColors(colors);
+    const strings = [];
+    const LINE_NB = 6;
 
-    let matLine = new LineMaterial({
-      color: 0xffffff,
-      linewidth: 0.01, // in world units with size attenuation, pixels otherwise
-      dashed: false,
-      // alphaToCoverage: true,
-    });
+    const group = new THREE.Group();
+    
+    for (let j = 0; j < LINE_NB; j++) {
 
-    let line = new Line2(geometry, matLine);
-    line.computeLineDistances();
-    line.scale.set(1, 1, 1);
-    line.position.z = 10;
-    line.position.x = -50;
+      const string = new String({
+        colors: stringColors,
+        positions: stringPositions
+      })
 
-    line.frustumCulled = false;
-    this.scene.instance.add(line);
+      string.position.z = j
+
+      group.add( string );
+    }
+    
+    
+
+    this.scene.instance.add(group);
+
+    // const positions = [];
+    // const colors = [];
+
+    // const divisions = 100;
+
+
+    // for (let j = 0; j < divisions; i++) {
+    //   positions.push((i / divisions) * 100, 0, 0);
+    //   colors.push(1, 1, 1);
+    // }
+
+    // const geometry = new LineGeometry();
+    // geometry.setPositions(positions);
+    // geometry.setColors(colors);
+
+    // let matLine = new LineMaterial({
+    //   color: 0xffffff,
+    //   linewidth: 0.01, // in world units with size attenuation, pixels otherwise
+    //   dashed: false,
+    //   // alphaToCoverage: true,
+    // });
+
+    // let line = new Line2(geometry, matLine);
+    // line.computeLineDistances();
+    // line.scale.set(1, 1, 1);
+    // line.position.z = 10;
+    // line.position.x = -50;
+
+    // line.frustumCulled = false;
+    // this.scene.instance.add(line);
 
     // let matLine = new LineMaterial( {
     //   color: 0xffffff,
@@ -172,7 +207,7 @@ export default class Application {
     }
 
     window.addEventListener("click", (e) => {
-      audio.start({
+      this.audio.start({
         onBeat: onBeat,
         live: false,
         src: "./static/galvanize.mp3",
@@ -188,6 +223,10 @@ export default class Application {
     this.renderer.render(this.scene.instance, this.camera.instance);
 
     this.composer.render();
+
+    if (this.audio.isPlaying) {
+      this.audio.update();
+    }
 
     // console.log('this.lineMesh.material.uniforms.dashOffset.value :>> ', this.lineMesh.material.uniforms.dashOffset.value);
 
