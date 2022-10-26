@@ -17,7 +17,9 @@ export default class String extends Line2 {
       opacity: 0,
       frequence: 0,
       stringIndex: _params.stringIndex,
-      distanceActive: .2,
+      distanceActiveColor: .2,
+      distanceActiveDistor: .8,
+      random: 0,
       percentAnim: 0
       // TODO: rajouter index string
       // alphaToCoverage: true,
@@ -40,11 +42,13 @@ export default class String extends Line2 {
 
   }
 
-  update(frequence, percentAnimation) {
+  update(frequence, percentAnimation, rd) {
 
     this.material.frequence = frequence;
 
     this.material.percentAnim = percentAnimation;
+    console.log('rd :>> ', rd);
+    this.material.random = rd;
 
     // console.log('this.material.frequence :>> ', this.material.frequence);
   }

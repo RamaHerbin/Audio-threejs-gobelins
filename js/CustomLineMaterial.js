@@ -29,7 +29,9 @@ UniformsLib.line = {
   frequence: { value: 0 },
   stringIndex: { value: -1 },
   percentAnim: { value: 0 },
-  distanceActive: { value: 0.2 },
+  distanceActiveColor: { value: 0.2 },
+  distanceActiveDistor: { value: 0.8 },
+  random: { value: 0 },
   gapSize: { value: 1 }, // todo FIX - maybe change to totalSize
 };
 
@@ -50,8 +52,10 @@ ShaderLib["line"] = {
 		uniform float linewidth;
 		uniform float frequence;
 		uniform float stringIndex;
-		uniform float distanceActive;
+		uniform float distanceActiveColor;
+		uniform float distanceActiveDistor;
 		uniform float percentAnim;
+		uniform float random;
 
 		uniform vec2 resolution;
 
@@ -266,16 +270,21 @@ ShaderLib["line"] = {
 
 				clip.y += sin( clip.x + stringIndex) * frequence;
 
+				// float powerDistor = abs((stringIndex) - clip.x) / (distanceActiveDistor *100.);
+
+				// if (powerDistor < 1.) {
+				// }
+
 			#endif
 
 			gl_Position = clip;
 
 			// vec4 mvPosition = ( position.y < 0.5 ) ? start : end; // this is an approximation
 
-			float power = abs((percentAnim*100.) - clip.x) / (distanceActive *100.);
+			float power = abs((percentAnim*100.) - clip.x) / (distanceActiveColor *100.);
 
 			if (power < 1.)
-				vColor = vec3(1.,0.,0.);
+				vColor = vec3(random, random, 1.);
 			else 
 				vColor = vec3(1.,1.,1.);
 
@@ -482,15 +491,37 @@ class CustomLineMaterial extends ShaderMaterial {
 				this.uniforms.stringIndex.value = value;
 			},
 		},
-		distanceActive: {
+		random: {
 			enumerable: true,
 
 			get: function () {
-				return this.uniforms.distanceActive.value;
+				return this.uniforms.random.value;
 			},
 
 			set: function (value) {
-				this.uniforms.distanceActive.value = value;
+				this.uniforms.random.value = value;
+			},
+		},
+		distanceActiveColor: {
+			enumerable: true,
+
+			get: function () {
+				return this.uniforms.distanceActiveColor.value;
+			},
+
+			set: function (value) {
+				this.uniforms.distanceActiveColor.value = value;
+			},
+		},
+		distanceActiveDistor: {
+			enumerable: true,
+
+			get: function () {
+				return this.uniforms.distanceActiveDistor.value;
+			},
+
+			set: function (value) {
+				this.uniforms.distanceActiveDistor.value = value;
 			},
 		},
 		percentAnim: {

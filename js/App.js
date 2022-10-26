@@ -105,10 +105,10 @@ export default class Application {
   setupMesh() {
 
 // Cube
-    // const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
-    // const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-    // const cube = new THREE.Mesh(cubeGeometry, material);
-    // this.scene.instance.add(cube);
+    const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
+    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    const cube = new THREE.Mesh(cubeGeometry, material);
+    this.scene.instance.add(cube);
 
 // Lines
 
@@ -122,7 +122,7 @@ export default class Application {
     }
 
     const strings = [];
-    const LINE_NB = 1;
+    const LINE_NB = 6;
 
     const group = new THREE.Group();
     
@@ -176,12 +176,8 @@ export default class Application {
       this.percentAnim > 1 ? this.percentAnim = 0: this.percentAnim += 0.01;
 
       for (let index = 0; index < this.strings.length; index++) {
-        this.strings[index].update(this.audio.values[index], this.percentAnim);
+        this.strings[index].update(this.audio.values[index], this.percentAnim, Math.random());
       }
     }
-
-    function normalize(val, max, min) { return (val - min) / (max - min); }
-
-
   };
 }
