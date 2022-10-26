@@ -224,9 +224,9 @@ class Audio {
 			this.ctx.fillStyle = 'yellow'
 			this.ctx.fill()
 			this.ctx.beginPath();
-			if(!this.live){
+			// if(!this.live){
 
-			}
+			// }
 			this.ctx.beginPath();
 			// this.ctx.rect(0, 6, 256*(this.audio.currentTime/this.audio.duration), 6)
 			this.ctx.rect(0, H_CANVAS, x, H_INFO_BAR)
