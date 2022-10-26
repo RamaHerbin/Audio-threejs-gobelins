@@ -27,6 +27,9 @@ UniformsLib.line = {
   dashScale: { value: 1 },
   dashSize: { value: 1 },
   frequence: { value: 0 },
+  stringIndex: { value: -1 },
+  percentAnim: { value: 0 },
+  distanceActive: { value: 0.2 },
   gapSize: { value: 1 }, // todo FIX - maybe change to totalSize
 };
 
@@ -46,13 +49,19 @@ ShaderLib["line"] = {
 
 		uniform float linewidth;
 		uniform float frequence;
+		uniform float stringIndex;
+		uniform float distanceActive;
+		uniform float percentAnim;
+
 		uniform vec2 resolution;
 
-		attribute vec3 instanceStart; // ça vient dou
+		attribute vec3 instanceStart; // BEGGINING OF LINE
 		attribute vec3 instanceEnd;
 
 		attribute vec3 instanceColorStart;
 		attribute vec3 instanceColorEnd;
+
+		varying vec3 vColor;
 
 		// #ifdef WORLD_UNITS
 
@@ -114,9 +123,6 @@ ShaderLib["line"] = {
 			float aspect = resolution.x / resolution.y;
 
 			// camera space
-			// vec4 start = modelViewMatrix * vec4( instanceStart, 1.0 );
-			// vec4 end = modelViewMatrix * vec4( instanceEnd, 1.0 );
-
 			vec4 start = modelViewMatrix * vec4( instanceStart, 1.0 );
 			vec4 end = modelViewMatrix * vec4( instanceEnd, 1.0 );
 
@@ -256,13 +262,23 @@ ShaderLib["line"] = {
 				// back to clip space
 				offset *= clip.w;
 
-				clip.xy += offset + frequence;
+				clip.xy += offset;
+
+				clip.y += sin( clip.x + stringIndex) * frequence;
 
 			#endif
 
 			gl_Position = clip;
 
-			vec4 mvPosition = ( position.y < 0.5 ) ? start : end; // this is an approximation
+			// vec4 mvPosition = ( position.y < 0.5 ) ? start : end; // this is an approximation
+
+			float power = abs((percentAnim*100.) - clip.x) / (distanceActive *100.);
+
+			if (power < 1.)
+				vColor = vec3(1.,0.,0.);
+			else 
+				vColor = vec3(1.,1.,1.);
+
 
 			#include <logdepthbuf_vertex>
 			#include <clipping_planes_vertex>
@@ -275,6 +291,9 @@ ShaderLib["line"] = {
 		uniform vec3 diffuse;
 		uniform float opacity;
 		uniform float linewidth;
+
+		varying vec3 vColor;
+
 
 		#ifdef USE_DASH
 
@@ -422,7 +441,10 @@ ShaderLib["line"] = {
 			#include <logdepthbuf_fragment>
 			#include <color_fragment>
 
-			gl_FragColor = vec4( diffuseColor.rgb, alpha );
+			vec3 color = vColor;
+
+
+			gl_FragColor = vec4( color, alpha );
 
 			#include <tonemapping_fragment>
 			#include <encodings_fragment>
@@ -449,6 +471,39 @@ class CustomLineMaterial extends ShaderMaterial {
     this.isLineMaterial = true;
 
     Object.defineProperties(this, {
+		stringIndex: {
+			enumerable: true,
+
+			get: function () {
+				return this.uniforms.stringIndex.value;
+			},
+
+			set: function (value) {
+				this.uniforms.stringIndex.value = value;
+			},
+		},
+		distanceActive: {
+			enumerable: true,
+
+			get: function () {
+				return this.uniforms.distanceActive.value;
+			},
+
+			set: function (value) {
+				this.uniforms.distanceActive.value = value;
+			},
+		},
+		percentAnim: {
+			enumerable: true,
+
+			get: function () {
+				return this.uniforms.percentAnim.value;
+			},
+
+			set: function (value) {
+				this.uniforms.percentAnim.value = value;
+			},
+		},
 		frequence: {
 			enumerable: true,
 

@@ -15,7 +15,11 @@ export default class String extends Line2 {
       linewidth: 0.005, // in world units with size attenuation, pixels otherwise
       dashed: false,
       opacity: 0,
-      frequence: 0
+      frequence: 0,
+      stringIndex: _params.stringIndex,
+      distanceActive: .2,
+      percentAnim: 0
+      // TODO: rajouter index string
       // alphaToCoverage: true,
     });
 
@@ -36,9 +40,11 @@ export default class String extends Line2 {
 
   }
 
-  update(frequence) {
+  update(frequence, percentAnimation) {
 
     this.material.frequence = frequence;
+
+    this.material.percentAnim = percentAnimation;
 
     // console.log('this.material.frequence :>> ', this.material.frequence);
   }
