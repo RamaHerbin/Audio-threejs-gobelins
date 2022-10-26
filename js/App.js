@@ -16,6 +16,8 @@ import Scene from "./Scene";
 import { Data3DTexture, WireframeGeometry } from "three";
 import String from "./String";
 
+import music from "/static/galvanize.mp3"
+
 export default class Application {
   constructor(_params) {
     this.$canvas = _params.$canvas;
@@ -153,7 +155,7 @@ export default class Application {
       this.audio.start({
         onBeat: onBeat,
         live: false,
-        src: "./static/galvanize.mp3",
+        src: music,
         // debug: true
       });
 
