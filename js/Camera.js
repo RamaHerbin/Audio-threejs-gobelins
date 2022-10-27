@@ -24,29 +24,33 @@ export default class Camera {
     setupInstance() {
         const { width, height } = this.sizes.viewport;
         this.instance = new THREE.PerspectiveCamera(75, width / height, 0.1, 100);
-        this.instance.position.set(0, 10, 7);
-        this.instance.rotation.x = 3.35;
+        this.instance.position.set(-29, 19, 6);
+        this.instance.rotation.x = -1.16;
+        this.instance.rotation.y = -0.29;
+        this.instance.rotation.z = 0;
         // this.instance.lookAt(new THREE.Vector3());
         this.container.add(this.instance);
 
         let fCamera = this.gui.addFolder("Camera");
 
-        fCamera.add(this.instance.position, "x", -30, 30, 1);
+        fCamera.add(this.instance.position, "x", -70, 30, 1);
         fCamera.add(this.instance.position, "y", -30, 30, 1);
-        fCamera.add(this.instance.position, "z", -30, 30, 1);
-        fCamera.add(this.instance.rotation, "x", 0, 10, .01);
-        fCamera.add(this.instance.rotation, "y", 0, 10, .01);
-        fCamera.add(this.instance.rotation, "z", 0, 10, .01);
+        fCamera.add(this.instance.position, "z", -30, 60, 1);
+        fCamera.add(this.instance.rotation, "x", -2, 1, .01);
+        fCamera.add(this.instance.rotation, "y", -1, 1, .01);
+        fCamera.add(this.instance.rotation, "z", -1, 1, .01);
 
         this.sizes.on('resize', () => {
             const { width, height } = this.sizes.viewport;
             this.instance.aspect = width / height;
             this.instance.updateProjectionMatrix();
         });
+
+
     }
 
     setupOrbitControls() {
-        this.orbitControls = new OrbitControls(this.instance, this.renderer.instance.domElement);
+        // this.orbitControls = new OrbitControls(this.instance, this.renderer.instance.domElement);
         // this.orbitControls.enableDamping = true;
 
         // this.time.on('tick', () => this.orbitControls.update());

@@ -2,6 +2,7 @@ import { Line2 } from "three/addons/lines/Line2.js";
 import { LineGeometry } from "three/addons/lines/LineGeometry.js";
 // import { LineMaterial } from "three/addons/lines/LineMaterial.js";
 import { CustomLineMaterial } from "./CustomLineMaterial.js"
+import * as THREE from "three";
 
 const geometry = new LineGeometry();
 
@@ -20,17 +21,18 @@ export default class String extends Line2 {
       distanceActiveColor: .2,
       distanceActiveDistor: .8,
       random: 0,
-      percentAnim: 0
+      percentAnim: 0,
+      time:0,
+      frequence1: 0
       // TODO: rajouter index string
       // alphaToCoverage: true,
     });
 
     geometry.setPositions(_params.positions);
     geometry.setColors(_params.colors);
-
-
+    // console.log( _params.positions )
+    
     super(geometry, matLine);
-
 
     // this.frequenceValue = 0; //updated by the onFrame func
     this.computeLineDistances();
@@ -38,20 +40,26 @@ export default class String extends Line2 {
     this.position.z = 10;
     this.position.x = -50;
     this.frustumCulled = false;
-
-
   }
 
-  update(frequence, percentAnimation, rd) {
+  update(frequence, percentAnimation, time, rd, frequence1) {
 
     this.material.frequence = frequence;
 
     this.material.percentAnim = percentAnimation;
-    console.log('rd :>> ', rd);
+    // console.log('rd :>> ', rd);
     this.material.random = rd;
+
+    this.material.time = time;
+
+    this.material.frequence1 = frequence1;
 
     // console.log('this.material.frequence :>> ', this.material.frequence);
   }
 
+  changeColor(color) {
 
+    this.material.color = color ;
+
+  } 
 }

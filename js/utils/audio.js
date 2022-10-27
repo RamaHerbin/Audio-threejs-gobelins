@@ -27,7 +27,7 @@ class Audio {
 		this.audioIndexStep = .06
 		this.isContrained = false
 		this.values = []
-		this.showPreview = true
+		this.showPreview = false;
 		this.easingAudioRangeValue = .48
 		for( let i = 0, n = this.audioRange; i < n; i++ ) {
 			this.values[ i ] = 0
@@ -276,8 +276,7 @@ class Audio {
 		else {
 			if (this.beatTime <= this.BEAT_HOLD_TIME) {
 				this.beatTime += dt
-			}
-			else {
+			} else {
 				this.beatCutOff *= this.BEAT_DECAY_RATE
 				this.beatCutOff = Math.max(this.beatCutOff, this.BEAT_MIN)
 			}

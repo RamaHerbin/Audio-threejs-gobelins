@@ -13,10 +13,10 @@ import Renderer from "./Renderer";
 import Sizes from "./utils/Sizes";
 import Camera from "./Camera";
 import Scene from "./Scene";
-import { Data3DTexture, WireframeGeometry } from "three";
+import { Data3DTexture, Vector3, WireframeGeometry } from "three";
 import String from "./String";
 
-import music from "/static/galvanize.mp3"
+import music from "/static/feel-good.mp3";
 
 export default class Application {
   constructor(_params) {
@@ -39,8 +39,10 @@ export default class Application {
     this.composer = null;
     this.gui = null;
     this.audio = null; //Audio module load dynamically
-    this.percentAnim = 0;
+    this.percentAnim = [0, 0 ,0 ,0 ,0 ,0];
+    this.time = 0;
 
+    this.colors // set in setupMesh
     this.strings = []; //Array of wavee strings
 
     this.setupGUI();
@@ -66,7 +68,7 @@ export default class Application {
     let fSettings = this.gui.addFolder("Settings");
     fSettings.open();
   }
-  
+
   setupCamera() {
     this.camera = new Camera({
       time: this.time,
@@ -105,14 +107,21 @@ export default class Application {
   }
 
   setupMesh() {
+    // Cube
+    // const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
+    // const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    // const cube = new THREE.Mesh(cubeGeometry, material);
+    // this.scene.instance.add(cube);
 
-// Cube
-    const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
-    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-    const cube = new THREE.Mesh(cubeGeometry, material);
-    this.scene.instance.add(cube);
-
-// Lines
+    // Lines
+    this.colors = [
+      new Vector3(1, 0, 0),
+      new Vector3(0, 1, 0),
+      new Vector3(0, 0, 1),
+      new Vector3(1, 0, 1),
+      new Vector3(1, 1, 0),
+      new Vector3(0, 1, 1),
+    ]
 
     const stringPositions = [];
     const stringColors = [];
@@ -127,29 +136,34 @@ export default class Application {
     const LINE_NB = 6;
 
     const group = new THREE.Group();
-    
-    for (let j = 0; j < LINE_NB; j++) {
 
+    for (let j = 0; j < LINE_NB; j++) {
       this.strings[j] = new String({
         colors: stringColors,
         positions: stringPositions,
-        stringIndex: j
-      })
+        stringIndex: j,
+      });
 
       this.strings[j].position.z = j;
-      group.add( this.strings[j] );
+      group.add(this.strings[j]);
     }
 
     this.scene.instance.add(group);
   }
 
   setupAudio() {
-    function onBeat() {
-      console.log("onBeat");
-    }
+    const onBeat = () => {
+      // console.log("onBeat");
+
+      for (let index = 0; index < this.strings.length; index++) {
+        this.strings[index].changeColor(this.colors[index]);
+      this.percentAnim[index] > 1 ? (this.percentAnim[index] = 0) : "";
+
+      }
+
+    };
 
     let audioEvent = async (e) => {
-
       this.audio = (await import("./utils/audio")).default;
 
       this.audio.start({
@@ -159,8 +173,10 @@ export default class Application {
         // debug: true
       });
 
-      window.removeEventListener('click', audioEvent);
-    }
+      document.querySelector('.consigne').classList.add('hide')
+
+      window.removeEventListener("click", audioEvent);
+    };
     window.addEventListener("click", audioEvent);
   }
 
@@ -175,10 +191,23 @@ export default class Application {
     if (this.audio && this.audio.isPlaying) {
       this.audio.update();
 
-      this.percentAnim > 1 ? this.percentAnim = 0: this.percentAnim += 0.01;
+      this.time += 0.01;
+
+      // console.log('this.values :>> ', );
+      
 
       for (let index = 0; index < this.strings.length; index++) {
-        this.strings[index].update(this.audio.values[index], this.percentAnim, Math.random());
+        
+        this.percentAnim[index] += 0.01 + (.01 * (index/2));
+
+        this.strings[index].update(
+          this.audio.values[index],
+          this.percentAnim[index],
+          this.time,
+          Math.random(),
+          this.audio.values[0],
+
+        );
       }
     }
   };

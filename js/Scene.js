@@ -13,7 +13,7 @@ export default class Scene {
     lightBehind.position.z = -5;
 
     this.instance.add(lightBehind);
-    this.instance.add(new THREE.PointLightHelper(lightBehind, 0.2));
+    // this.instance.add(new THREE.PointLightHelper(lightBehind, 0.2));
 
     const lightFront = new THREE.PointLight(0x00ffff, 0.5);
     lightFront.position.x = -5;
@@ -21,6 +21,13 @@ export default class Scene {
     lightFront.position.z = 5;
 
     this.instance.add(lightFront);
-    this.instance.add(new THREE.PointLightHelper(lightFront, 0.2));
+    // this.instance.add(new THREE.PointLightHelper(lightFront, 0.2));
+
+    // this.setupAxis()
+  }
+
+  setupAxis() {
+    const axesHelper = new THREE.AxesHelper( 5 );
+    this.instance.add( axesHelper );
   }
 }

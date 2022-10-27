@@ -31,6 +31,8 @@ UniformsLib.line = {
   percentAnim: { value: 0 },
   distanceActiveColor: { value: 0.2 },
   distanceActiveDistor: { value: 0.8 },
+  frequence1: {value:0},
+  time: { value: 0 },
   random: { value: 0 },
   gapSize: { value: 1 }, // todo FIX - maybe change to totalSize
 };
@@ -56,6 +58,9 @@ ShaderLib["line"] = {
 		uniform float distanceActiveDistor;
 		uniform float percentAnim;
 		uniform float random;
+		uniform float time;
+		uniform float frequence1;
+		uniform vec3 diffuse;
 
 		uniform vec2 resolution;
 
@@ -268,7 +273,27 @@ ShaderLib["line"] = {
 
 				clip.xy += offset;
 
-				clip.y += sin( clip.x + stringIndex) * frequence;
+				float posPercent = instanceStart.x / 1000.;
+				float power = abs((percentAnim*100.) - instanceStart.x ) / (distanceActiveColor *100.);
+
+				// clip.y += sin( (clip.x + stringIndex) * abs(1.-percentAnim) ) * frequence;
+				clip.y += sin( (clip.x + stringIndex) * frequence1 ) * frequence; // multiplier par pourcentage
+
+				if (power < 1.) {
+						vColor = diffuse;						
+
+					// if (random < .5) {
+					// 	vColor = vec3(0., 1., 0.);						
+					// } else {
+					// 	vColor = vec3(0., 0., 1.);						
+
+					// }
+					
+				} else {
+					vColor = vec3(1.,1.,1.);
+					// clip.y += clip.x;
+				} 
+				//vColor = vec3( posPercent, 0., 0. );
 
 				// float powerDistor = abs((stringIndex) - clip.x) / (distanceActiveDistor *100.);
 
@@ -281,12 +306,7 @@ ShaderLib["line"] = {
 
 			// vec4 mvPosition = ( position.y < 0.5 ) ? start : end; // this is an approximation
 
-			float power = abs((percentAnim*100.) - clip.x) / (distanceActiveColor *100.);
-
-			if (power < 1.)
-				vColor = vec3(random, random, 1.);
-			else 
-				vColor = vec3(1.,1.,1.);
+		
 
 
 			#include <logdepthbuf_vertex>
@@ -489,6 +509,28 @@ class CustomLineMaterial extends ShaderMaterial {
 
 			set: function (value) {
 				this.uniforms.stringIndex.value = value;
+			},
+		},
+		time: {
+			enumerable: true,
+
+			get: function () {
+				return this.uniforms.time.value;
+			},
+
+			set: function (value) {
+				this.uniforms.time.value = value;
+			},
+		},
+		frequence1: {
+			enumerable: true,
+
+			get: function () {
+				return this.uniforms.frequence1.value;
+			},
+
+			set: function (value) {
+				this.uniforms.frequence1.value = value;
 			},
 		},
 		random: {
