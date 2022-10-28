@@ -3,6 +3,16 @@ import * as THREE from 'three';
 
 
 export default class Renderer {
+
+/**
+ * This is the renderer constructor.
+ *
+ * @param {_$canvas} - DOM canvas
+ * @param {_viewport} - Object containing height and width of viewport
+ *
+ * @constructor
+ *
+ */
   constructor(_$canvas, _viewport) {
     this.instance = new THREE.WebGLRenderer({
       antialias: true, 

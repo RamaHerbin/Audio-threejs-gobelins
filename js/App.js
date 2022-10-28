@@ -1,8 +1,4 @@
 import * as THREE from "three";
-import { Line2 } from "three/addons/lines/Line2.js";
-import { LineMaterial } from "three/addons/lines/LineMaterial.js";
-import { LineGeometry } from "three/addons/lines/LineGeometry.js";
-import * as GeometryUtils from "three/addons/utils/GeometryUtils.js";
 
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
@@ -13,16 +9,18 @@ import Renderer from "./Renderer";
 import Sizes from "./utils/Sizes";
 import Camera from "./Camera";
 import Scene from "./Scene";
-import { Data3DTexture, Vector3, WireframeGeometry } from "three";
 import String from "./String";
 
 import music from "/static/feel-good.mp3";
 
+/**
+ * App constructor.
+ * @constructor
+ */
 export default class Application {
   constructor(_params) {
     this.$canvas = _params.$canvas;
 
-    console.log("INIT APP");
     this.sizes = new Sizes();
     this.scene = new Scene();
     this.renderer = new Renderer(this.$canvas, this.sizes.viewport);
@@ -39,10 +37,10 @@ export default class Application {
     this.composer = null;
     this.gui = null;
     this.audio = null; //Audio module load dynamically
-    this.percentAnim = [0, 0 ,0 ,0 ,0 ,0];
+    this.percentAnim = [0, 0, 0, 0, 0, 0];
     this.time = 0;
 
-    this.colors // set in setupMesh
+    this.colors = []; // set in setupMesh
     this.strings = []; //Array of wavee strings
 
     this.setupGUI();
@@ -51,7 +49,6 @@ export default class Application {
     this.setupGlow();
 
     this.setupMesh();
-
     this.setupAudio();
     this.onFrame();
 
@@ -96,6 +93,7 @@ export default class Application {
       0.4,
       0.85
     );
+
     bloomPass.threshold = 0;
     bloomPass.strength = 2;
     bloomPass.radius = 0.5;
@@ -106,22 +104,18 @@ export default class Application {
     this.composer.addPass(bloomPass);
   }
 
-  setupMesh() {
-    // Cube
-    // const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
-    // const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-    // const cube = new THREE.Mesh(cubeGeometry, material);
-    // this.scene.instance.add(cube);
 
+
+  setupMesh() {
     // Lines
     this.colors = [
-      new Vector3(1, 0, 0),
-      new Vector3(0, 1, 0),
-      new Vector3(0, 0, 1),
-      new Vector3(1, 0, 1),
-      new Vector3(1, 1, 0),
-      new Vector3(0, 1, 1),
-    ]
+      new THREE.Vector3(1, 0, 0),
+      new THREE.Vector3(0, 1, 0),
+      new THREE.Vector3(0, 0, 1),
+      new THREE.Vector3(1, 0, 1),
+      new THREE.Vector3(1, 1, 0),
+      new THREE.Vector3(0, 1, 1),
+    ];
 
     const stringPositions = [];
     const stringColors = [];
@@ -132,7 +126,6 @@ export default class Application {
       stringColors.push(1, 1, 1);
     }
 
-    const strings = [];
     const LINE_NB = 6;
 
     const group = new THREE.Group();
@@ -157,10 +150,8 @@ export default class Application {
 
       for (let index = 0; index < this.strings.length; index++) {
         this.strings[index].changeColor(this.colors[index]);
-      this.percentAnim[index] > 1 ? (this.percentAnim[index] = 0) : "";
-
+        this.percentAnim[index] > 1 ? (this.percentAnim[index] = 0) : "";
       }
-
     };
 
     let audioEvent = async (e) => {
@@ -173,16 +164,14 @@ export default class Application {
         // debug: true
       });
 
-      document.querySelector('.consigne').classList.add('hide')
-
+      document.querySelector(".consigne").classList.add("hide");
+      document.querySelector(".logo-gobelins").classList.add("hide");
       window.removeEventListener("click", audioEvent);
     };
     window.addEventListener("click", audioEvent);
   }
 
   onFrame = () => {
-    let self = this;
-
     requestAnimationFrame(this.onFrame);
     this.renderer.render(this.scene.instance, this.camera.instance);
 
@@ -193,20 +182,15 @@ export default class Application {
 
       this.time += 0.01;
 
-      // console.log('this.values :>> ', );
-      
-
       for (let index = 0; index < this.strings.length; index++) {
-        
-        this.percentAnim[index] += 0.01 + (.01 * (index/2));
+        this.percentAnim[index] += 0.01 + 0.01 * (index / 2);
 
         this.strings[index].update(
           this.audio.values[index],
           this.percentAnim[index],
           this.time,
           Math.random(),
-          this.audio.values[0],
-
+          this.audio.values[0]
         );
       }
     }

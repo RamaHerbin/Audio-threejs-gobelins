@@ -30,10 +30,7 @@ UniformsLib.line = {
   stringIndex: { value: -1 },
   percentAnim: { value: 0 },
   distanceActiveColor: { value: 0.2 },
-  distanceActiveDistor: { value: 0.8 },
   frequence1: {value:0},
-  time: { value: 0 },
-  random: { value: 0 },
   gapSize: { value: 1 }, // todo FIX - maybe change to totalSize
 };
 
@@ -55,10 +52,7 @@ ShaderLib["line"] = {
 		uniform float frequence;
 		uniform float stringIndex;
 		uniform float distanceActiveColor;
-		uniform float distanceActiveDistor;
 		uniform float percentAnim;
-		uniform float random;
-		uniform float time;
 		uniform float frequence1;
 		uniform vec3 diffuse;
 
@@ -276,38 +270,26 @@ ShaderLib["line"] = {
 				float posPercent = instanceStart.x / 1000.;
 				float power = abs((percentAnim*100.) - instanceStart.x ) / (distanceActiveColor *100.);
 
-				// clip.y += sin( (clip.x + stringIndex) * abs(1.-percentAnim) ) * frequence;
+				float distanceWave = .8;
+
+				// TODO: Distortion variation at the start/end
+				// float test = 
+
+				// We use frequence1 because it's the most present guitar's frequence 
 				clip.y += sin( (clip.x + stringIndex) * frequence1 ) * frequence; // multiplier par pourcentage
 
 				if (power < 1.) {
 						vColor = diffuse;						
-
-					// if (random < .5) {
-					// 	vColor = vec3(0., 1., 0.);						
-					// } else {
-					// 	vColor = vec3(0., 0., 1.);						
-
-					// }
-					
 				} else {
 					vColor = vec3(1.,1.,1.);
-					// clip.y += clip.x;
 				} 
 				//vColor = vec3( posPercent, 0., 0. );
-
-				// float powerDistor = abs((stringIndex) - clip.x) / (distanceActiveDistor *100.);
-
-				// if (powerDistor < 1.) {
-				// }
 
 			#endif
 
 			gl_Position = clip;
 
 			// vec4 mvPosition = ( position.y < 0.5 ) ? start : end; // this is an approximation
-
-		
-
 
 			#include <logdepthbuf_vertex>
 			#include <clipping_planes_vertex>
@@ -511,17 +493,6 @@ class CustomLineMaterial extends ShaderMaterial {
 				this.uniforms.stringIndex.value = value;
 			},
 		},
-		time: {
-			enumerable: true,
-
-			get: function () {
-				return this.uniforms.time.value;
-			},
-
-			set: function (value) {
-				this.uniforms.time.value = value;
-			},
-		},
 		frequence1: {
 			enumerable: true,
 
@@ -533,17 +504,7 @@ class CustomLineMaterial extends ShaderMaterial {
 				this.uniforms.frequence1.value = value;
 			},
 		},
-		random: {
-			enumerable: true,
 
-			get: function () {
-				return this.uniforms.random.value;
-			},
-
-			set: function (value) {
-				this.uniforms.random.value = value;
-			},
-		},
 		distanceActiveColor: {
 			enumerable: true,
 
@@ -553,17 +514,6 @@ class CustomLineMaterial extends ShaderMaterial {
 
 			set: function (value) {
 				this.uniforms.distanceActiveColor.value = value;
-			},
-		},
-		distanceActiveDistor: {
-			enumerable: true,
-
-			get: function () {
-				return this.uniforms.distanceActiveDistor.value;
-			},
-
-			set: function (value) {
-				this.uniforms.distanceActiveDistor.value = value;
 			},
 		},
 		percentAnim: {
